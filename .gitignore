@@ -1,0 +1,8 @@
+*.pyc
+a.out
+*.class
+*.exe
+.DS_Store
+.idea/
+.venv/
+*.egg-info/
