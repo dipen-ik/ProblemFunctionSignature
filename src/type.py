@@ -49,18 +49,6 @@ class Type:
     def __hash__(self):
         return hash((self.name, self.element_type))
 
-    def generate_convert_function_name(self):
-        """Generates unique read string for Type"""
-        return f'convert_{self}'
-
-    def generate_read_function_name(self):
-        """Generates unique read string for Type"""
-        return f'read_{self}'
-
-    def generate_print_function_name(self):
-        """Generates unique print string for Type"""
-        return f'print_{self}'
-
     def __str__(self):
         if self.primitive:
             return self.name
