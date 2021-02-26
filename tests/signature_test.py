@@ -1,6 +1,6 @@
 import pytest
 
-import function
+import signature as function
 import type as t
 
 

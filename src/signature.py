@@ -9,7 +9,7 @@ class Argument(NamedTuple):
     type: Type
 
 
-class Function:
+class Signature:
     def __init__(self, names_and_types: List[Tuple[str, Type]]):
         self.name = names_and_types[0][0]
         self.type = names_and_types[0][1]
@@ -28,8 +28,8 @@ class InvalidTypeException(ValidationException):
     pass
 
 
-def parse(signature: str) -> Function:
-    """Given a string representation of a function, e.g. 'int32 fun(x:int32,y:int32)', returns a Function."""
+def parse(signature: str) -> Signature:
+    """Parses a string like 'int32 f(x:int32,y:int32)' into a Signature instance."""
     pattern = r'(.+) (.+)\((.+)*\)'  # The string must be in format: "type0 fun_name(args*)".
     signature = signature.strip()
     regex_string = re.fullmatch(pattern, signature)
@@ -72,7 +72,7 @@ def parse(signature: str) -> Function:
 
     for i in range(0, len(names_and_types), 2):
         tuples_list.append((names_and_types[i], names_and_types[i + 1]))
-    return Function(_validate(tuples_list))
+    return Signature(_validate(tuples_list))
 
 
 def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
@@ -83,7 +83,7 @@ def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
     new_arg_type_list = []
 
     if not _validate_name(function_name):
-        raise InvalidNameException(f'Function {function_name}')
+        raise InvalidNameException(f'Invalid function name: {function_name}')
 
     function_type_validation = validate_type(function_type)
     if not function_type_validation[1]:
@@ -93,7 +93,7 @@ def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
 
     for i in arg_type_list[1:]:
         if not _validate_name(i[0]):
-            raise InvalidNameException(f'Argument {i[0]}')
+            raise InvalidNameException(f'Invalid argument name: {i[0]}')
 
         result = validate_type(i[1])
         if not result[1]:
@@ -105,7 +105,8 @@ def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
     for i in range(0, len(new_arg_type_list)):
         for j in range(i + 1, len(new_arg_type_list)):
             if new_arg_type_list[i][0] == new_arg_type_list[j][0]:
-                raise InvalidNameException(f'Name {new_arg_type_list[i][0]} appears several times')
+                raise InvalidNameException(
+                    f'"{new_arg_type_list[i][0]}" appears more than once among function and argument names')
 
     # Not allowing declarations of a custom type with more than one different subtypes in one function:
     for i in range(0, len(new_arg_type_list)):
@@ -113,13 +114,15 @@ def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
             if new_arg_type_list[i][1].custom:
                 if new_arg_type_list[i][1].name == new_arg_type_list[j][1].name:
                     if new_arg_type_list[i][1] != new_arg_type_list[j][1]:
-                        raise InvalidTypeException(f'Two declarations of custom type {new_arg_type_list[i][1].name}')
+                        raise InvalidTypeException(
+                            f'Two declarations of custom type {new_arg_type_list[i][1].name}')
 
     # Function or argument cannot be named as one of the types:
     for i in range(0, len(new_arg_type_list)):
         for type_name in all_type_names():
             if new_arg_type_list[i][0] == type_name:
-                raise InvalidNameException(f'Name must not match a type name: {type_name}')
+                raise InvalidNameException(
+                    f'"{type_name}" matches a type name; that is not acceptable for a name')
 
     return new_arg_type_list
 
