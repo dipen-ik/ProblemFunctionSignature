@@ -1,0 +1,28 @@
+# This workflow will install Python dependencies, run tests and lint
+# with a single version of Python. For more information see:
+# https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: ik.problem.function
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          # We use Python 3.6.6 to run the solution on Sphere Engine as of 10/2020, see #30.
+          # The closest compatible version GitHub workflows has for arch x64 is 3.6.7, see
+          # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
+          python-version: 3.6.7
+      - name: Install dependencies and the package under test
+        run: |
+          pip install -r requirements.txt
+      - name: Run unit tests
+        run: |
+          pytest
