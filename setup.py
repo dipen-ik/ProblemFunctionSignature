@@ -10,5 +10,5 @@ setup(
     long_description=long_description,
     url="https://github.com/InterviewKickstart/ProblemFunctionSignature",
     packages=['ik.problem.function'],
-    package_dir={'ik.problem.function': 'src'},
+    package_dir={'ik.problem.function': 'problem_function_signature'},
 )
