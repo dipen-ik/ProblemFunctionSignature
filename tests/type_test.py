@@ -37,6 +37,27 @@ def test_unequal_types(data_type1, data_type2):
     assert data_type1 != data_type2
 
 
+def test_to_dict_method():
+    t = tp.Type('SinglyLinkedListNode', tp.Type('list', tp.Type('int32')))
+    t_dict = t.to_dict()
+    assert t_dict == {
+        'name': 'SinglyLinkedListNode',
+        'element_type': {
+            'name': 'list',
+            'element_type': {
+                'name': 'int32',
+                'element_type': None,
+                'primitive': True,
+                'custom': False,
+            },
+            'primitive': False,
+            'custom': False,
+        },
+        'primitive': False,
+        'custom': True,
+    }
+
+
 def test_validate_type():
     assert not tp.validate_type('lis[int32]')[0]
     assert not tp.validate_type('listt[int32]')[0]

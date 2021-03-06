@@ -70,6 +70,14 @@ class Type:
             return False
         return self.name == 'list' and self.element_type.name == 'list'
 
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'element_type': self.element_type.to_dict() if self.element_type else None,
+            'primitive': self.primitive,
+            'custom': self.custom,
+        }
+
 
 def validate_type(data_type: str) -> Tuple[Optional[Type], bool]:
     """Checks if given string is a valid type and returns the Type instance.
