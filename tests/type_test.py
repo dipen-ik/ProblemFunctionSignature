@@ -1,6 +1,6 @@
 import pytest
 
-import type as tp
+from problem_function_signature import type as tp
 
 
 @pytest.mark.parametrize('data_type1, data_type2', [

@@ -1,7 +1,7 @@
 import re
 from typing import NamedTuple, List, Tuple
 
-from problem_function_signature.type import Type, all_type_names, validate_type
+from .type import Type, all_type_names, validate_type
 
 
 class Argument(NamedTuple):

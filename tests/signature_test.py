@@ -1,7 +1,7 @@
 import pytest
 
-import signature as function
-import type as t
+from problem_function_signature import signature as function
+from problem_function_signature import type as t
 
 
 @pytest.mark.parametrize('input_func_signature, expected', [
