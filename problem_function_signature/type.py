@@ -5,7 +5,7 @@ import itertools
 
 
 _primitive_type_names = ['int32', 'int64', 'bool', 'char', 'str', 'float']
-_composite_type_names = ['list', 'SinglyLinkedListNode']
+_composite_type_names = ['list', 'LinkedListNode', 'BinaryTreeNode', 'TreeNode']
 
 
 def all_type_names():
@@ -27,7 +27,7 @@ class Type:
         self.name = name
         self.element_type = element_type  # Type of the element of a composite type, e.g. a collection.
         self.primitive = element_type is None
-        self.custom = name == 'SinglyLinkedListNode'
+        self.custom = name in ('LinkedListNode', 'BinaryTreeNode', 'TreeNode')
         # "Custom" types are different from the others ("built-in") in that we declare every custom type
         # as a class or struct in code stubs (head.txt) in all languages.
 
@@ -55,6 +55,9 @@ class Type:
         else:
             return f'{self.name}_{self.element_type}'
 
+    def __repr__(self):
+        return self.__str__()
+
     def contains_list_of_primitive(self):
         """Returns whether self is a list of primitive values OR contains one.
            If it is or does, second returned value is the (primitive) type of the list elements."""
@@ -68,6 +71,12 @@ class Type:
     def is_list_of_lists(self):
         if self.primitive:
             return False
+        if str(self).startswith('list_LinkedListNode') or str(self).startswith('LinkedListNode_list'):
+            # Until CSG properly supports types like
+            # these, we need this
+            # behaviour to get some "problem review" tests
+            # to work as we need them to.
+            return True
         return self.name == 'list' and self.element_type.name == 'list'
 
     def to_dict(self):
