@@ -3,7 +3,7 @@ from typing import NamedTuple, List, Tuple
 
 from .type import Type, all_type_names, validate_type, composite_type_names
 
-ALLOW_UPPERCASE_IN_NAMES = False
+ALLOW_UPPERCASE_IN_NAMES = True
 
 
 class Argument(NamedTuple):
