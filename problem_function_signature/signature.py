@@ -1,7 +1,9 @@
 import re
 from typing import NamedTuple, List, Tuple
 
-from .type import Type, all_type_names, validate_type
+from .type import Type, all_type_names, validate_type, composite_type_names
+
+ALLOW_UPPERCASE_IN_NAMES = True
 
 
 class Argument(NamedTuple):
@@ -75,6 +77,13 @@ def parse(signature: str) -> Signature:
     return Signature(_validate(tuples_list))
 
 
+def _raise_invalid_type_exception(invalid_type):
+    error_message = f'{invalid_type} is an invalid type declaration.'
+    if invalid_type in composite_type_names():
+        error_message = f'{error_message} Did you mean {invalid_type}[int32]?'
+    raise InvalidTypeException(error_message)
+
+
 def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
     """Validates names and types of the function and arguments, converts types from str to Type."""
     function_name = arg_type_list[0][0]
@@ -87,7 +96,7 @@ def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
 
     function_type_validation = validate_type(function_type)
     if not function_type_validation[1]:
-        raise InvalidTypeException(function_type)
+        _raise_invalid_type_exception(function_type)
     else:
         new_arg_type_list.append((function_name, function_type_validation[0]))
 
@@ -97,7 +106,7 @@ def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
 
         result = validate_type(i[1])
         if not result[1]:
-            raise InvalidTypeException(i[1])
+            _raise_invalid_type_exception(i[1])
         else:
             new_arg_type_list.append((i[0], result[0]))
 
@@ -127,8 +136,7 @@ def _validate(arg_type_list: List[Tuple[str, str]]) -> List[Tuple[str, Type]]:
     return new_arg_type_list
 
 
-def _validate_name(name: str):
+def _validate_name(name: str) -> bool:
     """Checks if given string is a valid name for the student's solution function or its argument."""
-    if re.match(r'^[a-z][a-z0-9_]*$', name):
-        return True
-    return False
+    return ALLOW_UPPERCASE_IN_NAMES and bool(re.match(r'^[a-zA-Z][a-zA-Z0-9_]*$', name)) or \
+           not ALLOW_UPPERCASE_IN_NAMES and bool(re.match(r'^[a-z][a-z0-9_]*$', name))

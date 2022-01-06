@@ -6,8 +6,8 @@ from problem_function_signature import type as tp
 @pytest.mark.parametrize('data_type1, data_type2', [
     (tp.Type('int32'), tp.Type('int32')),
 
-    (tp.Type('SinglyLinkedListNode', tp.Type('list', tp.Type('int32'))),
-     tp.Type('SinglyLinkedListNode', tp.Type('list', tp.Type('int32')))),
+    (tp.Type('LinkedListNode', tp.Type('list', tp.Type('int32'))),
+     tp.Type('LinkedListNode', tp.Type('list', tp.Type('int32')))),
 
     (tp.Type('list', tp.Type('list', tp.Type('int32'))),
      tp.Type('list', tp.Type('list',tp.Type('int32')))),
@@ -21,14 +21,14 @@ def test_equal_types(data_type1, data_type2):
     (tp.Type('int32'),
      tp.Type('float')),
 
-    (tp.Type('SinglyLinkedListNode', tp.Type('list', tp.Type('str'))),
-     tp.Type('SinglyLinkedListNode', tp.Type('list', tp.Type('int64')))),
+    (tp.Type('LinkedListNode', tp.Type('list', tp.Type('str'))),
+     tp.Type('LinkedListNode', tp.Type('list', tp.Type('int64')))),
 
     (tp.Type('list', tp.Type('list', tp.Type('int64'))),
-     tp.Type('SinglyLinkedListNode', tp.Type('list', tp.Type('int64')))),
+     tp.Type('LinkedListNode', tp.Type('list', tp.Type('int64')))),
 
-    (tp.Type('SinglyLinkedListNode', tp.Type('int32')),
-     tp.Type('SinglyLinkedListNode', tp.Type('int64'))),
+    (tp.Type('LinkedListNode', tp.Type('int32')),
+     tp.Type('LinkedListNode', tp.Type('int64'))),
 
     (tp.Type('int32'), 'garbage'),
 ])
@@ -38,10 +38,10 @@ def test_unequal_types(data_type1, data_type2):
 
 
 def test_to_dict_method():
-    t = tp.Type('SinglyLinkedListNode', tp.Type('list', tp.Type('int32')))
+    t = tp.Type('LinkedListNode', tp.Type('list', tp.Type('int32')))
     t_dict = t.to_dict()
     assert t_dict == {
-        'name': 'SinglyLinkedListNode',
+        'name': 'LinkedListNode',
         'element_type': {
             'name': 'list',
             'element_type': {
@@ -56,6 +56,16 @@ def test_to_dict_method():
         'primitive': False,
         'custom': True,
     }
+
+
+def test_is_list_of_lists():
+    assert not tp.Type('LinkedListNode', tp.Type('int32')).is_list_of_lists()
+    assert not tp.Type('list', tp.Type('int32')).is_list_of_lists()
+    assert not tp.Type('int32').is_list_of_lists()
+    assert not tp.Type('str').is_list_of_lists()
+    assert tp.Type('list', tp.Type('list', tp.Type('int32'))).is_list_of_lists()
+    assert tp.Type('LinkedListNode', tp.Type('list', tp.Type('int32'))).is_list_of_lists()
+    assert tp.Type('list', tp.Type('LinkedListNode', tp.Type('str'))).is_list_of_lists()
 
 
 def test_validate_type():
