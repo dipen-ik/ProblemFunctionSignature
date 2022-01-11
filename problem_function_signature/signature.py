@@ -17,6 +17,18 @@ class Signature:
         self.type = names_and_types[0][1]
         self.args = [Argument(i[0], i[1]) for i in names_and_types[1:]]
 
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'type': self.type.to_dict(),
+            'args': [
+                {
+                    'name': arg.name,
+                    'type': arg.type.to_dict(),
+                } for arg in self.args
+            ],
+        }
+
 
 class ValidationException(Exception):
     pass
