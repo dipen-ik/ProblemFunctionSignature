@@ -33,6 +33,176 @@ def test_valid_function_signatures(input_func_signature, expected):
 
 
 @pytest.mark.parametrize(
+    'input_func_signature, expected_dict',
+    [
+        (
+            'int32  fun1(a:int32 , b:  int32)',
+            {
+                'name': 'fun1',
+                'type': {
+                    'name': 'int32',
+                    'element_type': None,
+                    'primitive': True,
+                    'custom': False,
+                },
+                'args': [
+                    {
+                        'name': 'a',
+                        'type': {
+                            'name': 'int32',
+                            'element_type': None,
+                            'primitive': True,
+                            'custom': False,
+                        },
+                    },
+                    {
+                        'name': 'b',
+                        'type': {
+                            'name': 'int32',
+                            'element_type': None,
+                            'primitive': True,
+                            'custom': False,
+                        },
+                    },
+                ],
+            },
+        ),
+        (
+            'list[int32] fun(z:list[list[char  ]])',
+            {
+                'name': 'fun',
+                'type': {
+                    'name': 'list',
+                    'element_type': {
+                        'name': 'int32',
+                        'element_type': None,
+                        'primitive': True,
+                        'custom': False,
+                    },
+                    'primitive': False,
+                    'custom': False,
+                },
+                'args': [
+                    {
+                        'name': 'z',
+                        'type': {
+                            'name': 'list',
+                            'element_type': {
+                                'name': 'list',
+                                'element_type': {
+                                    'name': 'char',
+                                    'element_type': None,
+                                    'primitive': True,
+                                    'custom': False,
+                                },
+                                'primitive': False,
+                                'custom': False,
+                            },
+                            'primitive': False,
+                            'custom': False,
+                        },
+                    },
+                ],
+            },
+        ),
+        (
+            'int32 fun(   )',
+            {
+                'name': 'fun',
+                'type': {
+                    'name': 'int32',
+                    'element_type': None,
+                    'primitive': True,
+                    'custom': False,
+                },
+                'args': [],
+            },
+        ),
+        (
+            'LinkedListNode[int32] f(x: LinkedListNode[int32])',
+            {
+                'name': 'f',
+                'type': {
+                    'name': 'LinkedListNode',
+                    'element_type': {
+                        'name': 'int32',
+                        'element_type': None,
+                        'primitive': True,
+                        'custom': False,
+                    },
+                    'primitive': False,
+                    'custom': True,
+                },
+                'args': [
+                    {
+                        'name': 'x',
+                        'type': {
+                            'name': 'LinkedListNode',
+                            'element_type': {
+                                'name': 'int32',
+                                'element_type': None,
+                                'primitive': True,
+                                'custom': False,
+                            },
+                            'primitive': False,
+                            'custom': True,
+                        },
+                    },
+                ],
+            },
+        ),
+        (
+            'list[LinkedListNode[int32]] f(x: list[LinkedListNode[int32]])',
+            {
+                'name': 'f',
+                'type': {
+                    'name': 'list',
+                    'element_type': {
+                        'name': 'LinkedListNode',
+                        'element_type': {
+                            'name': 'int32',
+                            'element_type': None,
+                            'primitive': True,
+                            'custom': False,
+                        },
+                        'primitive': False,
+                        'custom': True,
+                    },
+                    'primitive': False,
+                    'custom': False,
+                },
+                'args': [
+                    {
+                        'name': 'x',
+                        'type': {
+                            'name': 'list',
+                            'element_type': {
+                                'name': 'LinkedListNode',
+                                'element_type': {
+                                    'name': 'int32',
+                                    'element_type': None,
+                                    'primitive': True,
+                                    'custom': False,
+                                },
+                                'primitive': False,
+                                'custom': True,
+                            },
+                            'primitive': False,
+                            'custom': False,
+                        },
+                    },
+                ],
+            },
+        ),
+    ],
+)
+def test_to_dict(input_func_signature, expected_dict):
+    func = function.parse(input_func_signature)
+    returned_dict = func.to_dict()
+    assert returned_dict == expected_dict
+
+
+@pytest.mark.parametrize(
     'uppercase, signature', [(uppercase, signature)
                              for uppercase in [False, True]
                              for signature in [
